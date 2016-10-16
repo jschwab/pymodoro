@@ -230,8 +230,8 @@ class Config(object):
                 self.break_duration_in_seconds = args.break_duration * 60
         if args.update_interval_in_seconds:
             self.update_interval_in_seconds = args.update_interval_in_seconds
-        if args.total_number_of_marks:
-            self.total_number_of_marks = args.total_number_of_marks
+        if args.total_number_of_marks is not None:
+            self.total_number_of_marks = max(0, args.total_number_of_marks)
         if args.session_full_mark_character:
             self.session_full_mark_character = args.session_full_mark_character
         if args.break_full_mark_character:
@@ -284,7 +284,7 @@ class Pymodoro(object):
         self.running = True
         # cache last time the session file was touched
         # to know if the session file contents should be re-read
-        self.last_start_time = 0 
+        self.last_start_time = 0
 
     def run(self):
         """ Start main loop."""
@@ -389,8 +389,7 @@ class Pymodoro(object):
             prefix = self.config.pomodoro_prefix
             suffix = self.config.pomodoro_suffix
             progress = self.get_progress_bar(duration, seconds_left)
-            timer = "%02d:%02d" % (output_minutes, output_seconds)
-            format = "%s%s %s%s\n"
+            timer = "%02d" % (output_minutes)
 
         elif self.state == self.BREAK_STATE:
             duration = self.config.break_duration_in_seconds
@@ -401,8 +400,7 @@ class Pymodoro(object):
             prefix = self.config.break_prefix
             suffix = self.config.break_suffix
             progress = self.get_progress_bar(duration, break_seconds)
-            timer = "%02d:%02d" % (output_minutes, output_seconds)
-            format = "%s%s %s%s\n"
+            timer = "%02d" % (output_minutes)
 
         elif self.state == self.WAIT_STATE:
             seconds = -seconds_left
